@@ -1745,6 +1745,26 @@ hash_argument(const Context& ctx,
     return {};
   }
 
+  if (ctx.config.sloppiness().contains(core::Sloppy::include_nix_store)) {
+    bool should_ignore = false;
+    if (args[i] == "-I" || args[i] == "-L" || args[i] == "-isystem") {
+      if (i < args.size() - 1
+          && util::starts_with(args[i + 1], "/nix/store/")) {
+        i++;
+        should_ignore = true;
+      }
+    } else if (util::starts_with(args[i], "-I/nix/store")
+               || util::starts_with(args[i], "-L/nix/store")
+               || util::starts_with(args[i], "-isystem/nix/store")) {
+      should_ignore = true;
+    }
+    if (should_ignore) {
+      LOG("Ignoring {} since incude_nix_store sloppiness is requested",
+          args[i]);
+      return {};
+    }
+  }
+
   // When using the preprocessor, some arguments don't contribute to the hash.
   // The theory is that these arguments will change the output of -E if they are
   // going to have any effect at all. For precompiled headers this might not be

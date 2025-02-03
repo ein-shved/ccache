@@ -55,6 +55,8 @@ enum class Sloppy : uint32_t {
   random_seed = 1U << 12,
   // Enables sloppy handling of incbin
   incbin = 1U << 13,
+  // Ignore -I or -L or similar arguments leading to /nix/store/.
+  include_nix_store = 1U << 14,
 };
 
 using Sloppiness = util::BitSet<Sloppy>;
