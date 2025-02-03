@@ -340,6 +340,8 @@ parse_sloppiness(const std::string& value)
       result.insert(core::Sloppy::system_headers);
     } else if (token == "time_macros") {
       result.insert(core::Sloppy::time_macros);
+    } else if (token == "include_nix_store") {
+      result.insert(core::Sloppy::include_nix_store);
     } // else: ignore unknown value for forward compatibility
   }
 

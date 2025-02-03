@@ -1832,6 +1832,26 @@ hash_argument(const Context& ctx,
     return {};
   }
 
+  if (ctx.config.sloppiness().contains(core::Sloppy::include_nix_store)) {
+    bool should_ignore = false;
+    if (args[i] == "-I" || args[i] == "-L" || args[i] == "-isystem") {
+      if (i < args.size() - 1
+          && util::starts_with(args[i + 1], "/nix/store/")) {
+        i++;
+        should_ignore = true;
+      }
+    } else if (util::starts_with(args[i], "-I/nix/store")
+               || util::starts_with(args[i], "-L/nix/store")
+               || util::starts_with(args[i], "-isystem/nix/store")) {
+      should_ignore = true;
+    }
+    if (should_ignore) {
+      LOG("Ignoring {} since incude_nix_store sloppiness is requested",
+          args[i]);
+      return {};
+    }
+  }
+
   static const std::string_view frandomize_layout_seed_file =
     "-frandomize-layout-seed-file=";
   if (util::starts_with(args[i], frandomize_layout_seed_file)) {
