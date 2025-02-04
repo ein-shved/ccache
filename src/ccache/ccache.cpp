@@ -1315,6 +1315,7 @@ get_result_key_from_cpp(Context& ctx, Args& args, Hash& hash)
       args.push_back(FMT("-Fi{}", preprocessed_path));
     } else {
       args.push_back("-E");
+      args.push_back("-P");
       args.push_back("-o");
       args.push_back(preprocessed_path);
     }
